@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Cue Classic 2026 – Mock Ticketing App (Opener Test Harness)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #04130d;
+      --card-bg: #092319;
+      --gold: #d4af37;
+      --gold-light: #fae8a2;
+      --ivory: #fbf7ee;
+      --ivory-dim: #c5bfae;
+      --border: rgba(212, 175, 55, 0.3);
+      --green: #10b981;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: radial-gradient(circle at 50% 20%, #0e3325 0%, var(--bg) 70%);
+      color: var(--ivory);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      min-height: 100vh;
+      padding: 24px 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 680px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .header {
+      text-align: center;
+      padding-bottom: 8px;
+    }
+
+    .eyebrow {
+      font-family: 'Cinzel', serif;
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      color: var(--gold);
+      text-transform: uppercase;
+    }
+
+    h1 {
+      font-family: 'Cinzel', serif;
+      color: var(--gold-light);
+      font-size: 1.5rem;
+      margin: 4px 0;
+    }
+
+    .subtitle {
+      font-size: 0.85rem;
+      color: var(--ivory-dim);
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    }
+
+    h2 {
+      font-family: 'Cinzel', serif;
+      font-size: 1.1rem;
+      color: var(--gold);
+      margin-bottom: 12px;
+    }
+
+    p {
+      font-size: 0.88rem;
+      line-height: 1.5;
+      color: var(--ivory-dim);
+      margin-bottom: 14px;
+    }
+
+    .actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      background: linear-gradient(135deg, #fae8a2 0%, #d4af37 60%, #9e7b16 100%);
+      color: #030e09;
+      border: none;
+      border-radius: 10px;
+      padding: 12px 20px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+
+    button:hover {
+      filter: brightness(1.1);
+      transform: translateY(-1px);
+    }
+
+    button:active {
+      transform: translateY(1px);
+    }
+
+    .code-block {
+      background: #020906;
+      border: 1px solid rgba(212, 175, 55, 0.2);
+      border-radius: 8px;
+      padding: 12px;
+      font-family: monospace;
+      font-size: 0.82rem;
+      color: var(--gold-light);
+      overflow-x: auto;
+      margin-top: 8px;
+    }
+
+    .log-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 10px;
+      max-height: 280px;
+      overflow-y: auto;
+    }
+
+    .log-item {
+      background: rgba(4, 19, 13, 0.7);
+      border-left: 3px solid var(--green);
+      padding: 10px 14px;
+      border-radius: 0 8px 8px 0;
+      font-size: 0.85rem;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .log-time {
+      font-size: 0.72rem;
+      color: var(--gold);
+    }
+
+    .log-token {
+      font-family: monospace;
+      font-weight: 700;
+      color: #a7f3d0;
+      word-break: break-all;
+    }
+
+    .test-qr-section {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    .sample-token {
+      background: rgba(3, 14, 9, 0.6);
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px dashed rgba(212, 175, 55, 0.25);
+    }
+
+    .sample-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--gold-light);
+      margin-bottom: 4px;
+    }
+
+    .sample-value {
+      font-family: monospace;
+      font-size: 0.82rem;
+      color: var(--ivory);
+      word-break: break-all;
+      user-select: all;
+    }
+
+    .badge-valid {
+      color: #34d399;
+      font-weight: bold;
+    }
+
+    .badge-invalid {
+      color: #f87171;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <div class="eyebrow">Local Integration Test Harness</div>
+      <h1>The Cue Classic 2026</h1>
+      <div class="subtitle">Mock Opener Application for Standalone QR Scanner</div>
+    </header>
+
+    <section class="card">
+      <h2>1. Test Opener Window Communication</h2>
+      <p>
+        Click the button below to launch the standalone scanner using <code>window.open('index.html')</code>.
+        When a valid ticket QR is scanned, the scanner will post the message back to this window:
+      </p>
+      <div class="code-block">
+{ type: "TCC_QR_SCANNED", token: "TCCQR-..." }
+      </div>
+      <div class="actions" style="margin-top: 14px;">
+        <button id="btn-open-scanner" type="button">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          Open Scanner Window
+        </button>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>2. Received Token Log</h2>
+      <p>Tokens received via <code>window.addEventListener('message')</code> will appear below in real-time:</p>
+      <div id="log-list" class="log-list">
+        <div class="log-item" style="border-left-color: var(--gold);">
+          <span class="log-time">Waiting for scanner messages...</span>
+          <span>No tokens scanned yet. Open the scanner to test.</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>3. Sample Test Tokens & Format Rules</h2>
+      <p>The scanner strictly requires <code>TCCQR-</code> followed by exactly 32 hexadecimal characters (38 characters total):</p>
+      
+      <div class="test-qr-section">
+        <div class="sample-token">
+          <div class="sample-label"><span class="badge-valid">&#10004; Valid Ticket Token A (38 chars):</span></div>
+          <div class="sample-value">TCCQR-a1b2c3d4e5f60718293a4b5c6d7e8f90</div>
+        </div>
+
+        <div class="sample-token">
+          <div class="sample-label"><span class="badge-valid">&#10004; Valid Ticket Token B (38 chars):</span></div>
+          <div class="sample-value">TCCQR-8f9e0a1b2c3d4e5f6a7b8c9d0e1f2a3b</div>
+        </div>
+
+        <div class="sample-token">
+          <div class="sample-label"><span class="badge-invalid">&#10008; Invalid Format (Non-championship QR):</span></div>
+          <div class="sample-value">https://example.com/other-ticket</div>
+        </div>
+
+        <div class="sample-token">
+          <div class="sample-label"><span class="badge-invalid">&#10008; Invalid Length (Too short):</span></div>
+          <div class="sample-value">TCCQR-12345</div>
+        </div>
+      </div>
+      <p style="margin-top: 14px; font-size: 0.8rem;">
+        Tip: To scan these samples with your phone or webcam, paste any sample token into a free online QR generator (or your phone's screen) and aim the scanner camera at it.
+      </p>
+    </section>
+  </div>
+
+  <script>
+    const btnOpen = document.getElementById('btn-open-scanner');
+    const logList = document.getElementById('log-list');
+    let scannerWindow = null;
+
+    btnOpen.addEventListener('click', () => {
+      // Launch scanner popup
+      const width = 440;
+      const height = 760;
+      const left = (window.screen.width - width) / 2;
+      const top = (window.screen.height - height) / 2;
+
+      scannerWindow = window.open(
+        'index.html',
+        'TCC_Scanner_Window',
+        `width=${width},height=${height},left=${left},top=${top},resizable=yes,scrollbars=yes`
+      );
+    });
+
+    // Listen for postMessage from the standalone scanner
+    window.addEventListener('message', (event) => {
+      console.log('Received message event:', event);
+
+      const data = event.data;
+      if (data && data.type === 'TCC_QR_SCANNED') {
+        const timestamp = new Date().toLocaleTimeString();
+        const token = data.token;
+
+        const item = document.createElement('div');
+        item.className = 'log-item';
+        item.innerHTML = `
+          <div class="log-time">&#9679; Received at ${timestamp}</div>
+          <div class="log-token">Token: ${escapeHTML(token)}</div>
+          <div style="font-size: 0.75rem; color: #a7f3d0;">Origin: ${escapeHTML(event.origin || 'same-origin')} | Type: ${escapeHTML(data.type)}</div>
+        `;
+
+        // Remove placeholder if present
+        if (logList.children.length === 1 && logList.children[0].textContent.includes('Waiting for scanner')) {
+          logList.innerHTML = '';
+        }
+
+        logList.prepend(item);
+      }
+    });
+
+    function escapeHTML(str) {
+      return String(str).replace(/[&<>"']/g, (m) => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;'
+      }[m]));
+    }
+  </script>
+</body>
+</html>

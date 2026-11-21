@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#030e09">
+  <meta name="description" content="Standalone camera QR scanner for The Cue Classic – Snooker Championship 2026, presented by Stepher Hair Unisex Salon.">
+  
+  <title>The Cue Classic 2026 – Ticket QR Scanner</title>
+
+  <!-- Typography: Cinzel for Championship Heritage & Inter for Mobile Clarity -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Core Championship Styles -->
+  <link rel="stylesheet" href="css/scanner.css">
+</head>
+<body>
+  <!-- Toast Notification Container for Floating Alerts -->
+  <div id="toast-container" class="toast-container" aria-live="polite"></div>
+
+  <!-- Main Application Shell -->
+  <div class="app-shell">
+
+    <!-- Championship Header & Branding -->
+    <header class="championship-header">
+      <!-- Snooker Championship Emblem SVG -->
+      <svg class="championship-crest" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <circle cx="24" cy="24" r="22" stroke="url(#goldGrad)" stroke-width="1.8" fill="#082217" fill-opacity="0.9"/>
+        <!-- Crossed Cue Sticks -->
+        <line x1="12" y1="36" x2="36" y2="12" stroke="url(#goldGrad)" stroke-width="2.2" stroke-linecap="round"/>
+        <line x1="36" y1="36" x2="12" y2="12" stroke="url(#goldGrad)" stroke-width="2.2" stroke-linecap="round"/>
+        <!-- Snooker Balls Triangle Formation Accent -->
+        <circle cx="24" cy="18" r="3.2" fill="#d4af37" stroke="#fae8a2" stroke-width="0.8"/>
+        <circle cx="20.5" cy="24" r="3" fill="#e5c34d"/>
+        <circle cx="27.5" cy="24" r="3" fill="#e5c34d"/>
+        <circle cx="17.5" cy="29.5" r="2.8" fill="#ffffff"/>
+        <circle cx="24" cy="29.5" r="2.8" fill="#ef4444"/>
+        <circle cx="30.5" cy="29.5" r="2.8" fill="#030e09" stroke="#fae8a2" stroke-width="0.6"/>
+        <defs>
+          <linearGradient id="goldGrad" x1="0" y1="0" x2="48" y2="48" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#fae8a2"/>
+            <stop offset="0.5" stop-color="#d4af37"/>
+            <stop offset="1" stop-color="#856611"/>
+          </linearGradient>
+        </defs>
+      </svg>
+
+      <div class="championship-title-group">
+        <span class="championship-eyebrow">Official Scanner</span>
+        <h1 class="championship-title">The Cue Classic</h1>
+        <span class="championship-year">Snooker Championship 2026</span>
+      </div>
+
+      <div class="presenter-tag">
+        <span>Presented by</span>
+        <span class="gold-accent">Stepher Hair Unisex Salon</span>
+      </div>
+
+      <!-- Live Connection State Pill -->
+      <div id="opener-status-pill" class="opener-status-pill standalone" title="Scanner parent window status">
+        <span class="indicator-dot"></span>
+        <span id="opener-pill-text">Standalone Scanner Mode</span>
+      </div>
+    </header>
+
+    <!-- Main Scanner Viewport Area -->
+    <main class="scanner-main">
+      <section class="scanner-card" aria-label="Camera QR Scanner">
+
+        <!-- Top Status Bar Inside Card -->
+        <div class="scanner-status-bar">
+          <div class="status-indicator-group">
+            <span id="status-pulse-dot" class="status-pulse-dot pulse-ready"></span>
+            <span id="status-text" class="status-text">Camera Ready</span>
+          </div>
+
+          <div class="camera-controls-mini">
+            <!-- Flashlight / Torch Toggle (Shown when supported) -->
+            <button id="btn-toggle-torch" class="icon-btn-mini" type="button" aria-label="Toggle Flashlight" style="display: none;" title="Toggle Flashlight">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+              </svg>
+            </button>
+
+            <!-- Switch Camera Toggle (Shown if multiple cameras detected) -->
+            <button id="btn-switch-camera" class="icon-btn-mini" type="button" aria-label="Switch Camera" style="display: none;" title="Switch Camera">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 10c0-4.418-3.582-8-8-8s-8 3.582-8 8c0 1.954.702 3.744 1.87 5.13L4 18h5v-5l-1.85 1.85C6.31 13.71 6 12.4 6 11c0-3.314 2.686-6 6-6s6 2.686 6 6c0 1.4-.31 2.71-1.15 3.85L15 13v5h5l-1.87-2.87C19.298 13.744 20 11.954 20 10z"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Camera Viewfinder Window -->
+        <div id="viewfinder-wrapper" class="viewfinder-wrapper">
+
+          <!-- Low-Level Html5Qrcode Mount Point -->
+          <div id="reader"></div>
+
+          <!-- Standby / Camera Inactive Placeholder -->
+          <div id="viewfinder-placeholder" class="viewfinder-placeholder">
+            <div class="placeholder-icon-wrap">
+              <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                <circle cx="12" cy="13" r="4"></circle>
+              </svg>
+            </div>
+            <h2 class="placeholder-title">Scanner Standby</h2>
+            <p class="placeholder-hint">Tap Start Camera below to activate rear camera and scan championship tickets.</p>
+          </div>
+
+          <!-- Active Viewfinder Framing Overlay (Gold reticle & laser beam) -->
+          <div class="viewfinder-overlay" aria-hidden="true">
+            <div class="target-reticle">
+              <div class="corner-bracket top-left"></div>
+              <div class="corner-bracket top-right"></div>
+              <div class="corner-bracket bottom-left"></div>
+              <div class="corner-bracket bottom-right"></div>
+              <div class="laser-beam"></div>
+            </div>
+            <div class="viewfinder-tip">Align ticket QR inside frame</div>
+          </div>
+
+        </div>
+
+        <!-- Camera Device Dropdown (Visible when multiple cameras are found) -->
+        <div id="camera-select-row" class="camera-select-row" style="display: none;">
+          <label for="camera-select" class="camera-select-label">Active Camera:</label>
+          <select id="camera-select" class="camera-select" aria-label="Select camera device"></select>
+        </div>
+
+      </section>
+
+      <!-- Primary Touch Controls -->
+      <div class="controls-cluster">
+        <!-- Start Camera Button -->
+        <button id="btn-start-camera" class="btn-primary-action" type="button">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+            <circle cx="12" cy="13" r="4"></circle>
+          </svg>
+          Start Camera
+        </button>
+
+        <!-- Stop Camera Button (Hidden until scanning starts) -->
+        <button id="btn-stop-camera" class="btn-secondary-action" type="button" style="display: none;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect>
+          </svg>
+          Stop Camera
+        </button>
+      </div>
+
+    </main>
+
+    <!-- Footer Information -->
+    <footer class="scanner-footer">
+      <div class="format-pill">
+        <span>Format:</span>
+        <code class="format-code">TCCQR-[32 hex]</code>
+      </div>
+      <p class="copyright-text">The Cue Classic 2026 &bull; Stepher Hair Unisex Salon</p>
+    </footer>
+
+  </div>
+
+  <!-- Success Modal for Scanned Ticket Result -->
+  <div id="result-modal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="result-card">
+
+      <div class="result-badge">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+          <polyline points="22 4 12 14.01 9 11.01"></polyline>
+        </svg>
+      </div>
+
+      <h2 id="modal-title" class="result-title">Valid Ticket QR Scanned</h2>
+      <p class="result-subtitle">Official Cue Classic 2026 token verified</p>
+
+      <!-- Monospace Token Value Box -->
+      <div class="token-display-box">
+        <span class="token-label">Scanned Token</span>
+        <div id="result-token-text" class="token-value" title="Click to copy">TCCQR-00000000000000000000000000000000</div>
+      </div>
+
+      <!-- Opener Dispatch Status Notice -->
+      <div id="dispatch-banner" class="dispatch-banner sent">
+        <svg class="toast-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="16" x2="12" y2="12"></line>
+          <line x1="12" y1="8" x2="12.01" y2="8"></line>
+        </svg>
+        <span id="dispatch-text" class="toast-content">Successfully sent to The Cue Classic ticketing app.</span>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="modal-actions">
+        <button id="btn-copy-token" class="btn-outline" type="button">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+          </svg>
+          Copy Token
+        </button>
+
+        <button id="btn-scan-again" class="btn-primary-action" type="button" style="height: 48px; font-size: 0.95rem;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="23 4 23 10 17 10"></polyline>
+            <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+          </svg>
+          Scan Next Ticket
+        </button>
+
+        <button id="btn-close-modal" class="btn-outline" type="button" style="height: 42px; font-size: 0.85rem; border-color: rgba(212, 175, 55, 0.2);">
+          Close Window
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Pinned Library: html5-qrcode@2.3.8 from Official CDN with cdnjs Fallback -->
+  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+  <script>
+    if (typeof Html5Qrcode === 'undefined') {
+      document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"><\/script>');
+    }
+  </script>
+
+  <!-- Application Logic -->
+  <script src="js/scanner.js"></script>
+</body>
+</html>
